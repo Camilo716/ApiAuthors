@@ -16,13 +16,13 @@ public class AuthorController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<AuthorModel>>> GetAuthors()
+    public async Task<ActionResult<List<AuthorModel>>> Get()
     {
        return await _context.authors.ToListAsync();
     }
 
     [HttpPost] 
-    public async Task<ActionResult> PostAuthors(AuthorModel author)
+    public async Task<ActionResult> Post(AuthorModel author)
     {
         _context.Add(author);
         await _context.SaveChangesAsync();
@@ -30,7 +30,7 @@ public class AuthorController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    public async Task<ActionResult> PutAuthors(AuthorModel author, int id)
+    public async Task<ActionResult> Put([FromBody] AuthorModel author, int id)
     {
         if (author.Id != id)
             return BadRequest("Author's doesn't match with URL's id");
