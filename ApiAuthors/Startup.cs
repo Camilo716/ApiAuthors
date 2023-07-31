@@ -15,7 +15,8 @@ public class Startup
     {
         services.AddControllers();
 
-        services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("DbAuthorsInMemory"));
+        services.AddDbContext<ApplicationDbContext>(options => 
+            options.UseSqlServer(_config.GetConnectionString("dockerConnection")));
         
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
