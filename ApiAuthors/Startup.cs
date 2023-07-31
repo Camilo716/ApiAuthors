@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApiAuthors;
 
@@ -13,7 +14,9 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddControllers();
+        services.AddControllers()
+                .AddJsonOptions(
+                    x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
         services.AddDbContext<ApplicationDbContext>(options => 
             options.UseSqlServer(_config.GetConnectionString("dockerConnection")));
