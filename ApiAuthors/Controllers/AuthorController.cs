@@ -1,5 +1,6 @@
 using ApiAuthors.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApiAuthors.Controllers;
 
@@ -7,13 +8,25 @@ namespace ApiAuthors.Controllers;
 [Route("[controller]")]
 public class AuthorController : ControllerBase
 {
-    [HttpGet]
-    public ActionResult<List<AuthorModel>> GetAuthors()
+    private ApplicationDbContext _context;
+
+    public AuthorController(ApplicationDbContext context)
     {
-        return new List<AuthorModel>()
-        {
-                new AuthorModel(){Id = 1, Name = "Camilo"},
-                new AuthorModel(){Id = 2, Name = "Felipe"},
-        };
+        _context = context;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<AuthorModel>>> GetAuthors()
+    {
+       return await _context.authors.ToListAsync();
+    }
+
+    [HttpPost] 
+    public async Task<ActionResult> PostAuthors(AuthorModel author)
+    {
+        _context.Add(author);
+        await _context.SaveChangesAsync();
+        return Ok();
     }
 }
+

@@ -5,7 +5,7 @@ namespace ApiAuthors;
 
 public class ApplicationDbContext : DbContext
 {
-    public DbSet<AuthorModel> Authors{ get; set; }
+    public DbSet<AuthorModel> authors{ get; set; }
     public ApplicationDbContext(DbContextOptions options) : base(options) { }
 }
 
