@@ -35,10 +35,30 @@ public class AuthorController : ControllerBase
         if (author.Id != id)
             return BadRequest("Author's doesn't match with URL's id");
 
+        bool exist = await _context.authors.AnyAsync(a => a.Id == id);
+        if (!exist)
+        {
+            return NotFound();
+        } 
+
         _context.Update(author);
         await _context.SaveChangesAsync();
-
         return Ok();        
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+        bool exist = await _context.authors.AnyAsync(a => a.Id == id);
+        if (!exist)
+        {
+            return NotFound();
+        } 
+
+        AuthorModel author = _context.authors.Find(id)!;
+        _context.Remove(author);
+        await _context.SaveChangesAsync();
+        return Ok();
     }
 }
 
