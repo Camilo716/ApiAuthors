@@ -18,7 +18,7 @@ public class AuthorController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<AuthorModel>>> Get()
     {
-       return await _context.authors.ToListAsync();
+       return await _context.authors.Include(a => a.books).ToListAsync();
     }
 
     [HttpPost] 
