@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace ApiAuthors;
 
@@ -14,6 +14,9 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
+
+        services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("DbAuthorsInMemory"));
+        
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
     }
