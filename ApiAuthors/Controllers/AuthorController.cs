@@ -43,6 +43,17 @@ public class AuthorController : ControllerBase
         return author;
     }
 
+    [HttpGet("{name}")]
+    public async Task<ActionResult<AuthorModel>> GetByName(string name)
+    {
+        var author = await _context.authors.Include(a => a.books).FirstOrDefaultAsync(a => a.Name == name);
+
+        if(author is null)
+            return NotFound();
+
+        return author;
+    }
+
     [HttpPost] 
     public async Task<ActionResult> Post(AuthorModel author)
     {
