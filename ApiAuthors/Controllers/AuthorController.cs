@@ -22,9 +22,25 @@ public class AuthorController : ControllerBase
     }
 
     [HttpGet("first")]
-    public async Task<ActionResult<AuthorModel>> GetFirstAuthor ()
+    public async Task<ActionResult<AuthorModel>> GetFirst()
     {   
-        return await _context.authors.Include(a => a.books).FirstOrDefaultAsync();
+        var author =  await _context.authors.Include(a => a.books).FirstOrDefaultAsync();
+
+        if (author is null)
+            return NotFound();
+
+        return author;
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<AuthorModel>> GetById(int id)
+    {
+        var author = await _context.authors.Include(a => a.books).FirstOrDefaultAsync(a => a.Id == id);
+
+        if(author is null)
+            return NotFound();
+
+        return author;
     }
 
     [HttpPost] 
