@@ -21,6 +21,12 @@ public class AuthorController : ControllerBase
        return await _context.authors.Include(a => a.books).ToListAsync();
     }
 
+    [HttpGet("first")]
+    public async Task<ActionResult<AuthorModel>> GetFirstAuthor ()
+    {   
+        return await _context.authors.Include(a => a.books).FirstOrDefaultAsync();
+    }
+
     [HttpPost] 
     public async Task<ActionResult> Post(AuthorModel author)
     {
