@@ -8,7 +8,7 @@ namespace ApiAuthors.Controllers;
 [Route("api/[controller]")]
 public class BookController : ControllerBase
 {
-    private ApplicationDbContext _context;
+    private readonly ApplicationDbContext _context;
 
     public BookController(ApplicationDbContext context)
     {
@@ -18,17 +18,17 @@ public class BookController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<ActionResult<BookModel>> GetById(int id)
     {
-        var book =  await _context.books.Include(b => b.author).FirstOrDefaultAsync(b => b.Id == id);
+        var book =  await _context.Books.Include(b => b.Author).FirstOrDefaultAsync(b => b.Id == id);
         return book == null ? NotFound() : book;
     }
 
     [HttpPost]
     public async Task<ActionResult> Post(BookModel book)
     { 
-        var authorExist = await _context.authors.AnyAsync(a => a.Id == book.authorId);
+        var authorExist = await _context.Authors.AnyAsync(a => a.Id == book.AuthorId);
 
         if(!authorExist)
-            return BadRequest($"Author with id {book.authorId} doesn't exist");
+            return BadRequest($"Author with id {book.AuthorId} doesn't exist");
 
 
         _context.Add(book);

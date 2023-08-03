@@ -8,7 +8,7 @@ namespace ApiAuthors.Controllers;
 [Route("api/[controller]")]
 public class AuthorController : ControllerBase
 {
-    private ApplicationDbContext _context;
+    private readonly ApplicationDbContext _context;
 
     public AuthorController(ApplicationDbContext context)
     {
@@ -18,13 +18,13 @@ public class AuthorController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<AuthorModel>>> Get()
     {
-       return await _context.authors.Include(a => a.books).ToListAsync();
+       return await _context.Authors.Include(a => a.Books).ToListAsync();
     }
 
     [HttpGet("first")]
     public async Task<ActionResult<AuthorModel>> GetFirst()
     {   
-        var author =  await _context.authors.Include(a => a.books).FirstOrDefaultAsync();
+        var author =  await _context.Authors.Include(a => a.Books).FirstOrDefaultAsync();
 
         if (author is null)
             return NotFound();
@@ -35,7 +35,7 @@ public class AuthorController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<ActionResult<AuthorModel>> GetById(int id)
     {
-        var author = await _context.authors.Include(a => a.books).FirstOrDefaultAsync(a => a.Id == id);
+        var author = await _context.Authors.Include(a => a.Books).FirstOrDefaultAsync(a => a.Id == id);
 
         if(author is null)
             return NotFound();
@@ -46,7 +46,7 @@ public class AuthorController : ControllerBase
     [HttpGet("{name}")]
     public async Task<ActionResult<AuthorModel>> GetByName(string name)
     {
-        var author = await _context.authors.Include(a => a.books).FirstOrDefaultAsync(a => a.Name == name);
+        var author = await _context.Authors.Include(a => a.Books).FirstOrDefaultAsync(a => a.Name == name);
 
         if(author is null)
             return NotFound();
@@ -68,7 +68,7 @@ public class AuthorController : ControllerBase
         if (author.Id != id)
             return BadRequest("Author's doesn't match with URL's id");
 
-        bool exist = await _context.authors.AnyAsync(a => a.Id == id);
+        bool exist = await _context.Authors.AnyAsync(a => a.Id == id);
         if (!exist)
         {
             return NotFound();
@@ -82,13 +82,13 @@ public class AuthorController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> Delete(int id)
     {
-        bool exist = await _context.authors.AnyAsync(a => a.Id == id);
+        bool exist = await _context.Authors.AnyAsync(a => a.Id == id);
         if (!exist)
         {
             return NotFound();
         } 
 
-        AuthorModel author = _context.authors.Find(id)!;
+        AuthorModel author = _context.Authors.Find(id)!;
         _context.Remove(author);
         await _context.SaveChangesAsync();
         return Ok();
