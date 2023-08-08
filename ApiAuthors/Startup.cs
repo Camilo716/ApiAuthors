@@ -1,11 +1,12 @@
 ﻿using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiAuthors;
 
 public class Startup
 {
-    public IConfiguration _config { get; }
+    private readonly IConfiguration _config;
 
     public Startup(IConfiguration config)
     {
@@ -21,6 +22,8 @@ public class Startup
         services.AddDbContext<ApplicationDbContext>(options => 
             options.UseSqlServer(_config.GetConnectionString("dockerConnection")));
         
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
     }
@@ -45,4 +48,3 @@ public class Startup
         });
     }
 }
-
