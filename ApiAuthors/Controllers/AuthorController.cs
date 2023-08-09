@@ -55,8 +55,13 @@ public class AuthorController : ControllerBase
     }
 
     [HttpPost] 
-    public async Task<ActionResult> Post(AuthorModel author)
+    public async Task<ActionResult> Post([FromBody] AuthorModel author)
     {
+        bool existAnAuthorWithTheSameName = await _context.Authors.AnyAsync(a => a.Name == author.Name);
+
+        if (existAnAuthorWithTheSameName)
+            return BadRequest($"Already exist an author with the name {author.Name}"); 
+
         _context.Add(author);
         await _context.SaveChangesAsync();
         return Ok();
