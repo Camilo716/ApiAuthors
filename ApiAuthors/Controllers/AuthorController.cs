@@ -1,4 +1,6 @@
+using ApiAuthors.DTOs;
 using ApiAuthors.Models;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,9 +11,11 @@ namespace ApiAuthors.Controllers;
 public class AuthorController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
+    private readonly IMapper _mapper;
 
-    public AuthorController(ApplicationDbContext context)
+    public AuthorController(ApplicationDbContext context, IMapper mapper)
     {
+        _mapper = mapper;
         _context = context;
     }
 
@@ -55,13 +59,14 @@ public class AuthorController : ControllerBase
     }
 
     [HttpPost] 
-    public async Task<ActionResult> Post([FromBody] AuthorModel author)
+    public async Task<ActionResult> Post([FromBody] AuthorDTO authorDTO)
     {
-        bool existAnAuthorWithTheSameName = await _context.Authors.AnyAsync(a => a.Name == author.Name);
+        bool existAnAuthorWithTheSameName = await _context.Authors.AnyAsync(a => a.Name == authorDTO.Name);
 
         if (existAnAuthorWithTheSameName)
-            return BadRequest($"Already exist an author with the name {author.Name}"); 
+            return BadRequest($"Already exist an author with the name {authorDTO.Name}"); 
 
+        var author = _mapper.Map<AuthorModel>(authorDTO);
         _context.Add(author);
         await _context.SaveChangesAsync();
         return Ok();
