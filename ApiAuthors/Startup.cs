@@ -26,6 +26,8 @@ public class Startup
 
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+
+        services.AddAutoMapper(typeof(Startup));
     }
 
     public void ConfigureMiddlewares(IApplicationBuilder app, IHostEnvironment env)
