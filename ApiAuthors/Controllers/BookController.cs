@@ -18,7 +18,7 @@ public class BookController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<ActionResult<BookModel>> GetById(int id)
     {
-        var book =  await _context.Books.Include(b => b.Author).FirstOrDefaultAsync(b => b.Id == id);
+        var book =  await _context.Books.FirstOrDefaultAsync(b => b.Id == id);
         return book == null ? NotFound() : book;
     }
 
@@ -29,7 +29,6 @@ public class BookController : ControllerBase
 
         if(!authorExist)
             return BadRequest($"Author with id {book.AuthorId} doesn't exist");
-
 
         _context.Add(book);
         await _context.SaveChangesAsync();

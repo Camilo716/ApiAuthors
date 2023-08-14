@@ -8,7 +8,7 @@ public class AutomapperProfiles: Profile
 {
     public AutomapperProfiles()
     {
-        CreateMap<AuthorDTO, AuthorModel>();
-        CreateMap<AuthorModel, AuthorDTO>();
+        CreateMap<AuthorRequestDTO, AuthorModel>();
+        CreateMap<AuthorModel, AuthorResponseDTO>();
     }
 }

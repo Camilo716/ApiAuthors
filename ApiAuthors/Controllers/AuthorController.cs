@@ -20,38 +20,39 @@ public class AuthorController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<AuthorDTO>>> Get()
+    public async Task<ActionResult<List<AuthorResponseDTO>>> Get()
     {
         var authors = await _context.Authors.Include(a => a.Books).ToListAsync();
-        var authorsDto = _mapper.Map<List<AuthorDTO>>(authors);
+        var authorsDto = _mapper.Map<List<AuthorResponseDTO>>(authors);
         return authorsDto;
     }
 
     [HttpGet("first")]
-    public async Task<ActionResult<AuthorDTO>> GetFirst()
+    public async Task<ActionResult<AuthorResponseDTO>> GetFirst()
     {   
         var author =  await _context.Authors.Include(a => a.Books).FirstOrDefaultAsync();
 
         if (author is null)
             return NotFound();
 
-        var authorsDto =  _mapper.Map<AuthorDTO>(author);
-        return authorsDto;
+        var authorDto =  _mapper.Map<AuthorResponseDTO>(author);
+        return authorDto;
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<AuthorModel>> GetById([FromRoute] int id)
+    public async Task<ActionResult<AuthorResponseDTO>> GetById([FromRoute] int id)
     {
         var author = await _context.Authors.Include(a => a.Books).FirstOrDefaultAsync(a => a.Id == id);
 
         if(author is null)
             return NotFound();
 
-        return author;
+        var authorDto = _mapper.Map<AuthorResponseDTO>(author);
+        return authorDto;
     }
 
     [HttpGet("{name}")]
-    public async Task<ActionResult<List<AuthorDTO>>> GetByName([FromRoute] string name)
+    public async Task<ActionResult<List<AuthorResponseDTO>>> GetByName([FromRoute] string name)
     {
         var authors = await _context.Authors
                             .Include(a => a.Books)
@@ -60,19 +61,19 @@ public class AuthorController : ControllerBase
         if (authors is null)
             return NotFound($"There is not coincidences for name {name}");
 
-        var authorsDto = _mapper.Map<List<AuthorDTO>>(authors);
+        var authorsDto = _mapper.Map<List<AuthorResponseDTO>>(authors);
         return authorsDto;
     }
 
     [HttpPost] 
-    public async Task<ActionResult> Post([FromBody] AuthorDTO authorDTO)
+    public async Task<ActionResult> Post([FromBody] AuthorRequestDTO AuthorRequestDTO)
     {
-        bool existAnAuthorWithTheSameName = await _context.Authors.AnyAsync(a => a.Name == authorDTO.Name);
+        bool existAnAuthorWithTheSameName = await _context.Authors.AnyAsync(a => a.Name == AuthorRequestDTO.Name);
 
         if (existAnAuthorWithTheSameName)
-            return BadRequest($"Already exist an author with the name {authorDTO.Name}"); 
+            return BadRequest($"Already exist an author with the name {AuthorRequestDTO.Name}"); 
 
-        var author = _mapper.Map<AuthorModel>(authorDTO);
+        var author = _mapper.Map<AuthorModel>(AuthorRequestDTO);
         _context.Add(author);
         await _context.SaveChangesAsync();
         return Ok();
