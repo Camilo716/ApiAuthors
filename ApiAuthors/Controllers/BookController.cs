@@ -1,4 +1,6 @@
+using ApiAuthors.DTOs;
 using ApiAuthors.Models;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,9 +11,11 @@ namespace ApiAuthors.Controllers;
 public class BookController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-    public BookController(ApplicationDbContext context)
+    public BookController(ApplicationDbContext context, IMapper mapper) 
     {
+        _mapper = mapper;
         _context = context;
     }
 
@@ -23,18 +27,11 @@ public class BookController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> Post(BookModel book)
+    public async Task<ActionResult> Post(BookRequestDTO bookDto)
     { 
-        var authorExist = await _context.Authors.AnyAsync(a => a.Id == book.AuthorId);
-
-        if(!authorExist)
-            return BadRequest($"Author with id {book.AuthorId} doesn't exist");
-
+        var book = _mapper.Map<BookModel>(bookDto);
         _context.Add(book);
         await _context.SaveChangesAsync();
         return Ok();
-        
-
-        
     } 
 }
