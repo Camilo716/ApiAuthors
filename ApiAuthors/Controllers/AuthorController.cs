@@ -48,14 +48,15 @@ public class AuthorController : ControllerBase
     }
 
     [HttpGet("{name}")]
-    public async Task<ActionResult<AuthorModel>> GetByName(string name)
+    public async Task<List<AuthorDTO>> GetByName(string name)
     {
-        var author = await _context.Authors.Include(a => a.Books).FirstOrDefaultAsync(a => a.Name == name);
+        var authors = await _context.Authors
+                            .Include(a => a.Books)
+                            .Where(a => a.Name.Contains(name))
+                            .ToListAsync();
 
-        if(author is null)
-            return NotFound();
-
-        return author;
+        var authorsDto = _mapper.Map<List<AuthorDTO>>(authors);
+        return authorsDto;
     }
 
     [HttpPost] 
