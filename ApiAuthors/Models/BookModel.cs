@@ -12,4 +12,6 @@ public class BookModel
 
     public int AuthorId { get; set; }
     public AuthorModel? Author { get; set; }
+
+    public List<CommentModel> comments { get; set; } 
 }
