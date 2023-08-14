@@ -40,7 +40,7 @@ public class AuthorController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<AuthorModel>> GetById(int id)
+    public async Task<ActionResult<AuthorModel>> GetById([FromRoute] int id)
     {
         var author = await _context.Authors.Include(a => a.Books).FirstOrDefaultAsync(a => a.Id == id);
 
@@ -51,7 +51,7 @@ public class AuthorController : ControllerBase
     }
 
     [HttpGet("{name}")]
-    public async Task<ActionResult<List<AuthorDTO>>> GetByName(string name)
+    public async Task<ActionResult<List<AuthorDTO>>> GetByName([FromRoute] string name)
     {
         var authors = await _context.Authors
                             .Include(a => a.Books)
@@ -96,7 +96,7 @@ public class AuthorController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<ActionResult> Delete(int id)
+    public async Task<ActionResult> Delete([FromRoute] int id)
     {
         bool exist = await _context.Authors.AnyAsync(a => a.Id == id);
         if (!exist)
