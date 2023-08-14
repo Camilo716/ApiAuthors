@@ -48,12 +48,14 @@ public class AuthorController : ControllerBase
     }
 
     [HttpGet("{name}")]
-    public async Task<List<AuthorDTO>> GetByName(string name)
+    public async Task<ActionResult<List<AuthorDTO>>> GetByName(string name)
     {
         var authors = await _context.Authors
                             .Include(a => a.Books)
                             .Where(a => a.Name.Contains(name))
                             .ToListAsync();
+        if (authors is null)
+            return NotFound($"There is not coincidences for name {name}");
 
         var authorsDto = _mapper.Map<List<AuthorDTO>>(authors);
         return authorsDto;
