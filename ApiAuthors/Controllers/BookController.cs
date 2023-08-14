@@ -20,10 +20,15 @@ public class BookController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<BookModel>> GetById(int id)
+    public async Task<ActionResult<BookResponseDTO>> GetById(int id)
     {
         var book =  await _context.Books.FirstOrDefaultAsync(b => b.Id == id);
-        return book == null ? NotFound() : book;
+
+        if (book is null)
+            return NotFound();
+
+        var bookDto = _mapper.Map<BookResponseDTO>(book);
+        return Ok(bookDto);
     }
 
     [HttpPost]
