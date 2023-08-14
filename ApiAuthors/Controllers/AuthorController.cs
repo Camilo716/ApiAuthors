@@ -20,20 +20,23 @@ public class AuthorController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<AuthorModel>>> Get()
+    public async Task<ActionResult<List<AuthorDTO>>> Get()
     {
-       return await _context.Authors.Include(a => a.Books).ToListAsync();
+        var authors = await _context.Authors.Include(a => a.Books).ToListAsync();
+        var authorsDto = _mapper.Map<List<AuthorDTO>>(authors);
+        return authorsDto;
     }
 
     [HttpGet("first")]
-    public async Task<ActionResult<AuthorModel>> GetFirst()
+    public async Task<ActionResult<AuthorDTO>> GetFirst()
     {   
         var author =  await _context.Authors.Include(a => a.Books).FirstOrDefaultAsync();
 
         if (author is null)
             return NotFound();
 
-        return author;
+        var authorsDto =  _mapper.Map<AuthorDTO>(author);
+        return authorsDto;
     }
 
     [HttpGet("{id:int}")]
