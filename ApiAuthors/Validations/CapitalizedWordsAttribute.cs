@@ -1,6 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace ApiAuthors.Validations;
+
+public class Foo
+{
+    
+}
+
 public class CapitalizedWordsAttribute : ValidationAttribute
 {
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
