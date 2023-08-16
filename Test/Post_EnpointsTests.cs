@@ -13,16 +13,18 @@ public class Post_EnpointsTests : IClassFixture<WebApplicationFactory<Program>>
         _factory = factory; 
     }
 
-    [Fact]
-    public async Task Post_NotAllNamesWordsInCaps_BadRequest()
+    [Theory]
+    [InlineData("Camilo gonzalez")]
+    [InlineData("Name That Meets The Rule Of Caps But Is Too Long")]
+    public async Task Post_AuthorBadRequests(string name)
     {
         var client = _factory.CreateClient();
-        var author = new AuthorRequestDTO { Name = "Camilo gonzalez" };
-
+        var author = new AuthorRequestDTO { Name = name };
         var jsonContent = JsonConvert.SerializeObject(author);
         HttpContent httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync("/Api/Author", httpContent); 
+
         Assert.Equal("BadRequest", response.StatusCode.ToString());        
     }
 }
