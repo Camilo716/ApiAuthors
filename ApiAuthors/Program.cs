@@ -1,13 +1,19 @@
 using ApiAuthors;
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
-var builder = WebApplication.CreateBuilder(args);
+        var startup = new Startup(builder.Configuration);
 
-var startup = new Startup(builder.Configuration);
+        startup.ConfigureServices(builder.Services);
 
-startup.ConfigureServices(builder.Services);
+        var app = builder.Build();
 
-var app = builder.Build();
+        startup.ConfigureMiddlewares(app, app.Environment);
 
-startup.ConfigureMiddlewares(app, app.Environment);
+        app.Run();
+    }
+}
 
-app.Run();
