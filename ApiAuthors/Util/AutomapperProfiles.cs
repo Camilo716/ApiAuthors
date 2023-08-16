@@ -15,5 +15,6 @@ public class AutomapperProfiles: Profile
         CreateMap<BookModel, BookResponseDTO>();
 
         CreateMap<CommentModel, CommentResponseDTO>();
+        CreateMap<CommentRequestDTO, CommentModel>();
     }
 }

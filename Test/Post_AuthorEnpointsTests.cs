@@ -6,11 +6,11 @@ using Newtonsoft.Json;
 
 namespace Test;
 
-public class Post_EnpointsTests : IClassFixture<WebApplicationFactory<Program>>
+public class Post_AuthorsEnpointsTests : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly WebApplicationFactory<Program> _factory;
 
-    public Post_EnpointsTests(WebApplicationFactory<Program> factory)
+    public Post_AuthorsEnpointsTests(WebApplicationFactory<Program> factory)
     {
         _factory = factory; 
     }
@@ -18,7 +18,7 @@ public class Post_EnpointsTests : IClassFixture<WebApplicationFactory<Program>>
     [Theory]
     [InlineData("Pepe pipas")]
     [InlineData("Name That Meets The Rule Of Caps But Is Too Long")]
-    public async Task Post_AuthorBadRequestsTest(string name)
+    public async Task Post_Author_BadRequestsTests(string name)
     {
         var client = _factory.CreateClient();
         var httpContent = this.GetHttpContent(name);
@@ -30,7 +30,7 @@ public class Post_EnpointsTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     // [Fact]
-    // public async Task Post_AuthorSuccessTest()
+    // public async Task Post_Author_SuccessTest()
     // {
     //     var client = _factory.CreateClient();
     //     var httpContent = this.GetHttpContent("Kent Beck");
@@ -46,7 +46,7 @@ public class Post_EnpointsTests : IClassFixture<WebApplicationFactory<Program>>
     // }
 
     [Fact]
-    public async Task Post_AuthorAlreadyExistBadRequestTest()
+    public async Task Post_AuthorAlreadyExist_BadRequestTest()
     {
         var client = _factory.CreateClient();
         var httpContent1 = this.GetHttpContent("Robert C. Martin");
