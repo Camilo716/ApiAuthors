@@ -15,7 +15,7 @@ public class Post_EnpointsTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Theory]
-    [InlineData("Martin fowler")]
+    [InlineData("Pepe pipas")]
     [InlineData("Name That Meets The Rule Of Caps But Is Too Long")]
     public async Task Post_AuthorBadRequestsTest(string name)
     {
@@ -26,11 +26,12 @@ public class Post_EnpointsTests : IClassFixture<WebApplicationFactory<Program>>
 
         var response = await client.PostAsync("/Api/Author", httpContent); 
 
-        Assert.Equal("BadRequest", response.StatusCode.ToString());        
+        Assert.Equal("BadRequest", response.StatusCode.ToString());   
+        client.Dispose();     
     }
 
     [Fact]
-    public async Task Post_AuthorSuccessRequestTest()
+    public async Task Post_AuthorSuccessTest()
     {
         var client = _factory.CreateClient();
         var author = new AuthorRequestDTO{ Name = "Martin Fowler" };
@@ -44,6 +45,27 @@ public class Post_EnpointsTests : IClassFixture<WebApplicationFactory<Program>>
             response.StatusCode.ToString() == "OK",
             $"Expected status code OK but got {response.StatusCode}, "+
             $"Response content: {responseContent}");
+        client.Dispose();     
+    }
+
+    [Fact]
+    public async Task Post_AuthorAlreadyExistBadRequestTest()
+    {
+        var client = _factory.CreateClient();
+
+        var author1 = new AuthorRequestDTO{ Name = "Robert C. Martin" };
+        var jsonContent1 = JsonConvert.SerializeObject(author1);
+        HttpContent httpContent1 = new StringContent(jsonContent1, Encoding.UTF8, "application/json");
+
+        var author2 = new AuthorRequestDTO{ Name = "Robert C. Martin" };
+        var jsonContent2 = JsonConvert.SerializeObject(author2);
+        HttpContent httpContent2 = new StringContent(jsonContent1, Encoding.UTF8, "application/json");
+
+        var response1 =  await client.PostAsync("Api/Author", httpContent1);
+        var response2 =  await client.PostAsync("Api/Author", httpContent2);
+
+        Assert.Equal("BadRequest", response2.StatusCode.ToString());
+        client.Dispose();     
     }
 }
     
