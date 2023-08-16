@@ -20,6 +20,7 @@ public class Get_EnpointsTests : IClassFixture<WebApplicationFactory<Program>>
     [InlineData("/Api/Author/first")]
     [InlineData("/Api/Author/3")]
     [InlineData("/Api/Author/Camilo")]
+    [InlineData("/Api/Book/1/Comment")]
     public async Task Get_EndpointsReturnSuccessAndCorrectContentType(string url)
     {
         var client = _factory.CreateClient();
