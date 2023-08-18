@@ -3,6 +3,7 @@ using ApiAuthors.DTOs;
 using Microsoft.OpenApi.Writers;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Newtonsoft.Json;
+using Test.Helpers;
 
 namespace Test;
 
@@ -21,50 +22,61 @@ public class Post_AuthorsEnpointsTests : IClassFixture<WebApplicationFactory<Pro
     public async Task Post_Author_BadRequestsTests(string name)
     {
         var client = _factory.CreateClient();
-        var httpContent = this.GetHttpContent(name);
+        var httpContent = Utilities.GetAuthorHttpContent(name);
 
-        var response = await client.PostAsync("/Api/Author", httpContent); 
+        try
+        {
+            var response = await client.PostAsync("/Api/Author", httpContent); 
 
-        Assert.Equal("BadRequest", response.StatusCode.ToString());   
-        client.Dispose();     
+            Assert.Equal("BadRequest", response.StatusCode.ToString());   
+        }
+        finally
+        {
+            await Utilities.CleanDatabase(_factory);
+        }
     }
 
-    // [Fact]
-    // public async Task Post_Author_SuccessTest()
-    // {
-    //     var client = _factory.CreateClient();
-    //     var httpContent = this.GetHttpContent("Kent Beck");
+    [Fact]
+    public async Task Post_Author_SuccessTest()
+    {
+        await Utilities.CleanDatabase(_factory);
+        var client = _factory.CreateClient();
+        var httpContent = Utilities.GetAuthorHttpContent("Kent Beck");
 
-    //     var response = await client.PostAsync("Api/Author", httpContent);
-        
-    //     var responseContent = await response.Content.ReadAsStringAsync();
-    //     Assert.True(
-    //         response.StatusCode.ToString() == "OK",
-    //         $"Expected status code OK but got {response.StatusCode}, "+
-    //         $"Response content: {responseContent}");
-    //     client.Dispose();     
-    // }
+        try
+        {
+            var response = await client.PostAsync("Api/Author", httpContent);
+            
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Assert.True(
+                response.StatusCode.ToString() == "OK",
+                $"Expected status code OK but got {response.StatusCode}, "+
+                $"Response content: {responseContent}");
+        }
+        finally
+        {
+            await Utilities.CleanDatabase(_factory);
+        }
+    }
 
     [Fact]
     public async Task Post_AuthorAlreadyExist_BadRequestTest()
     {
+        await Utilities.CleanDatabase(_factory);
         var client = _factory.CreateClient();
-        var httpContent1 = this.GetHttpContent("Robert C. Martin");
-        var httpContent2 = this.GetHttpContent("Robert C. Martin");
+        var httpContent1 = Utilities.GetAuthorHttpContent("Robert C. Martin");
+        var httpContent2 = Utilities.GetAuthorHttpContent("Robert C. Martin");
 
-        var response1 =  await client.PostAsync("Api/Author", httpContent1);
-        var response2 =  await client.PostAsync("Api/Author", httpContent2);
-
-        Assert.Equal("BadRequest", response2.StatusCode.ToString());
-        client.Dispose();     
-    }
-
-    private HttpContent GetHttpContent(string name)
-    {
-        var author = new AuthorRequestDTO{ Name = name };
-        var jsonContent = JsonConvert.SerializeObject(author);
-        HttpContent httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-        return httpContent;
+        try
+        {
+            var response1 =  await client.PostAsync("Api/Author", httpContent1);
+            var response2 =  await client.PostAsync("Api/Author", httpContent2);
+            Assert.Equal("BadRequest", response2.StatusCode.ToString());
+        }
+        finally
+        {
+            await Utilities.CleanDatabase(_factory);
+        }
     }
 }
     

@@ -19,8 +19,17 @@ public class Startup
                 .AddJsonOptions(
                     x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
-        services.AddDbContext<ApplicationDbContext>(options => 
-            options.UseSqlServer(_config.GetConnectionString("dockerConnection")));
+        // services.AddDbContext<ApplicationDbContext>(
+        //     options => 
+        //         options.UseInMemoryDatabase(Guid.NewGuid().ToString()),
+        //     contextLifetime:ServiceLifetime.Transient
+        //     );
+        
+        services.AddDbContext<ApplicationDbContext>(
+            options => 
+                options.UseSqlServer(_config.GetConnectionString("dockerConnection")),
+            contextLifetime:ServiceLifetime.Scoped
+            );
         
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
