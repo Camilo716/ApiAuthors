@@ -18,12 +18,6 @@ public class Startup
         services.AddControllers()
                 .AddJsonOptions(
                     x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
-
-        // services.AddDbContext<ApplicationDbContext>(
-        //     options => 
-        //         options.UseInMemoryDatabase(Guid.NewGuid().ToString()),
-        //     contextLifetime:ServiceLifetime.Transient
-        //     );
         
         services.AddDbContext<ApplicationDbContext>(
             options => 
