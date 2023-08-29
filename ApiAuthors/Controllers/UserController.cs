@@ -15,11 +15,13 @@ public class UserController: ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly IConfiguration _configuration;
+    private readonly SignInManager<IdentityUser> _signInManager;
 
-    public UserController(UserManager<IdentityUser> userManager, IConfiguration configuration)
+    public UserController(UserManager<IdentityUser> userManager, IConfiguration configuration, SignInManager<IdentityUser>  signInManager)
     {
         _userManager = userManager;
         _configuration = configuration;
+        _signInManager = signInManager;
     }
 
     [HttpPost("signup")]
@@ -37,6 +39,20 @@ public class UserController: ControllerBase
         return buildToken(userCredentials);  
     } 
 
+    [HttpPost("logging")]
+    public async Task<ActionResult<AuthenticationResponse>> LoggingAsync(UserCredentials userCredentials)
+    {
+        var result = await _signInManager.PasswordSignInAsync(
+            userCredentials.Email,
+            userCredentials.Password,
+            isPersistent:false,
+            lockoutOnFailure:false);
+
+        if (!result.Succeeded)
+            return BadRequest("failed logging");
+
+        return buildToken(userCredentials);
+    }
     private AuthenticationResponse buildToken(UserCredentials userCredentials)
     {
         var claims = new List<Claim>()
@@ -44,7 +60,7 @@ public class UserController: ControllerBase
             new Claim("email", userCredentials.Email)
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["llavejwt"]!)); 
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["keyjwt"]!)); 
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         var expiration = DateTime.Now.AddYears(1);
 

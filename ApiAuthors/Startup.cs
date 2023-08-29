@@ -1,7 +1,9 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ApiAuthors;
 
@@ -26,7 +28,16 @@ public class Startup
             contextLifetime:ServiceLifetime.Scoped
             );
         
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(opt => opt.TokenValidationParameters = new TokenValidationParameters{
+                        ValidateIssuer=false,
+                        ValidateAudience=false,
+                        ValidateLifetime=true,
+                        ValidateIssuerSigningKey=true,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(_config["keyjwt"]!)),
+                        ClockSkew=TimeSpan.Zero
+                    });
 
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
