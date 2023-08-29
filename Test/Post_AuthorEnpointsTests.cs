@@ -21,6 +21,7 @@ public class Post_AuthorsEnpointsTests : IClassFixture<WebApplicationFactory<Pro
     [InlineData("Name That Meets The Rule Of Caps But Is Too Long")]
     public async Task Post_Author_BadRequestsTests(string name)
     {
+        await Utilities.CleanDatabase(_factory);
         var client = _factory.CreateClient();
         var httpContent = Utilities.GetAuthorHttpContent(name);
 

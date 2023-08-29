@@ -22,6 +22,7 @@ public class Get_EnpointsTests : IClassFixture<WebApplicationFactory<Program>>
     [InlineData("/Api/Book/1/Comment")]
     public async Task Get_EndpointsReturnSuccessAndCorrectContentType(string url)
     {
+        await Utilities.CleanDatabase(_factory);
         var client = _factory.CreateClient();
         var kentAuthor = Utilities.GetAuthorHttpContent("Kent");
         await client.PostAsync("/Api/Author", kentAuthor);
