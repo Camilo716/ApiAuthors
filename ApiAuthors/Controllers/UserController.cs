@@ -22,24 +22,19 @@ public class UserController: ControllerBase
         _configuration = configuration;
     }
 
-    [HttpPost("loggin")]
-    public async Task<ActionResult<AuthenticationResponse>> logginAsync(UserCredentials userCredentials)
+    [HttpPost("signup")]
+    public async Task<ActionResult<AuthenticationResponse>> SignUpAsync(UserCredentials userCredentials)
     {
         var user = new IdentityUser {
             UserName=userCredentials.Email,
             Email=userCredentials.Email};
 
-
         var result = await _userManager.CreateAsync(user, userCredentials.Password);
 
-        if (result.Succeeded)
-        {
-            return buildToken(userCredentials);  
-        }
-        else{
+        if (!result.Succeeded)
             return BadRequest(result.Errors);
-        }
 
+        return buildToken(userCredentials);  
     } 
 
     private AuthenticationResponse buildToken(UserCredentials userCredentials)
