@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiAuthors;
@@ -31,6 +32,9 @@ public class Startup
         services.AddSwaggerGen();
 
         services.AddAutoMapper(typeof(Startup));
+        services.AddIdentity<IdentityUser, IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
     }
 
     public void ConfigureMiddlewares(IApplicationBuilder app, IHostEnvironment env)
